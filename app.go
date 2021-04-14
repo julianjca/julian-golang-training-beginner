@@ -6,15 +6,19 @@ import (
 )
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(`{"status":"healthy"}`))
+	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusOK)
+	jsonData := []byte(`{"status":"healthy"}`)
+	w.Write(jsonData)
 }
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(`{"message":"hello world"}`))
+	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusOK)
+	jsonData := []byte(`{"message":"hello world"}`)
+	w.Write(jsonData)
 }
 
 func handleRequests() {
