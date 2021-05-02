@@ -44,7 +44,5 @@ func (t paymentCodeRepository) Create(p *golangtraining.PaymentCode) (res golang
 }
 
 func (t paymentCodeRepository) GetByID(ID string) (res golangtraining.PaymentCode, err error) {
-	fmt.Print("test")
-
 	return
 }

@@ -49,8 +49,6 @@ func (s service) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 }
 
 func (s service) GetByID(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	fmt.Printf(ps.ByName("id"))
-
 	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusOK)
