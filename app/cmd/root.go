@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 
+	golangtraining "github.com/julianjca/julian-golang-training-beginner"
+	postgres "github.com/julianjca/julian-golang-training-beginner/internal/postgres"
+	paymentcode "github.com/julianjca/julian-golang-training-beginner/paymentcodes"
 	_ "github.com/lib/pq"
 )
 
@@ -16,6 +19,11 @@ const (
 	dbname   = "golang_training"
 )
 
+var (
+	paymentCodeRepository golangtraining.IPaymentCodeRepository
+	paymentCodeService    golangtraining.IPaymentCodeService
+)
+
 func init() {
 	log.Println("connecting to db")
 
@@ -24,6 +32,9 @@ func init() {
 		host, port, user, password, dbname)
 
 	db, err := sql.Open("postgres", psqlInfo)
+	paymentCodeRepository = postgres.NewPaymentCodeRepository(db)
+	paymentCodeService = paymentcode.NewService(paymentCodeRepository)
+
 	if err != nil {
 		panic(err)
 	}

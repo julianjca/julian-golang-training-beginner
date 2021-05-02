@@ -5,13 +5,17 @@ import (
 	"net/http"
 
 	rest "github.com/julianjca/julian-golang-training-beginner/internal/rest"
+	"github.com/julienschmidt/httprouter"
 )
 
 func Execute() {
 	port := ":3000"
 
-	rest.InitHandler()
+	r := httprouter.New()
+
+	rest.InitHandler(r)
+	rest.InitPaymentCodeRESTHandler(r, paymentCodeService)
 
 	log.Println("listen on", port)
-	log.Fatal(http.ListenAndServe(port, nil))
+	log.Fatal(http.ListenAndServe(port, r))
 }
