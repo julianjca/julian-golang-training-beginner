@@ -33,8 +33,12 @@ func NewService(
 func (s service) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
+	paymentCodeBody := &golangtraining.PaymentCode{
+		Status: "ACTIVE",
+	}
+
 	w.WriteHeader(http.StatusOK)
-	s.repo.GetByID("123")
+	s.repo.Create(paymentCodeBody)
 	jsonData := CreateResponse{Status: "123"}
 
 	e, err := json.Marshal(jsonData)

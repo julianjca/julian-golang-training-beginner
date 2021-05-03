@@ -23,6 +23,7 @@ func NewPaymentCodeRepository(db *sql.DB) golangtraining.IPaymentCodeRepository 
 
 func (t paymentCodeRepository) Create(p *golangtraining.PaymentCode) (res golangtraining.PaymentCode, err error) {
 	newUUID, err := uuid.NewRandom()
+
 	if err != nil {
 		err = errors.Wrap(err, "can't generate the UUID")
 		return
@@ -33,12 +34,26 @@ func (t paymentCodeRepository) Create(p *golangtraining.PaymentCode) (res golang
 	p.CreatedAt = now
 	p.UpdatedAt = now
 	p.Status = "ACTIVE"
+	p.Name = "lechsa"
+	p.PaymentCode = "abc123"
 
-	sql, _, err := sq.
-		Insert("payment_code").Columns("id", "payment_code", "name", "status", "expiration_date", "created_at", "updated_at").
-		Values(p.ID, p.PaymentCode, p.Name, p.Status, p.ExpirationDate, p.CreatedAt, p.UpdatedAt).ToSql()
+	fmt.Println(t.DB)
 
-	fmt.Print(sql)
+	// query := sq.
+	// 	Insert("payment_code").Columns("id", "payment_code", "name", "status", "expiration_date", "created_at", "updated_at").
+	// 	Values(p.ID, p.PaymentCode, p.Name, p.Status, p.ExpirationDate, p.CreatedAt, p.UpdatedAt).PlaceholderFormat(sq.Dollar)
+
+	query := sq.
+		Insert("payment_codes").
+		Columns("id", "payment_code", "name", "status", "expiration_date", "created_at", "updated_at").
+		Values(p.ID, p.PaymentCode, p.Name, p.Status, p.ExpirationDate, p.CreatedAt, p.UpdatedAt).
+		Suffix("RETURNING \"id\"").
+		PlaceholderFormat(sq.Dollar)
+
+	resp, err := query.RunWith(t.DB).Exec()
+
+	fmt.Print(err)
+	fmt.Print(resp)
 
 	return
 }

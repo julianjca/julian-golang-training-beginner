@@ -3,7 +3,6 @@ package cmd
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	golangtraining "github.com/julianjca/julian-golang-training-beginner"
 	postgres "github.com/julianjca/julian-golang-training-beginner/internal/postgres"
@@ -15,7 +14,7 @@ const (
 	host     = "localhost"
 	port     = 5432
 	user     = "postgres"
-	password = ""
+	password = "password"
 	dbname   = "golang_training"
 )
 
@@ -25,8 +24,6 @@ var (
 )
 
 func init() {
-	log.Println("connecting to db")
-
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -38,5 +35,13 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	// defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Successfully connected!")
+
 }
