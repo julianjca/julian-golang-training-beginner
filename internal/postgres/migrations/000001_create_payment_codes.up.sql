@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS payment_codes(
    payment_code TEXT,
    name TEXT,
    status TEXT,
-   expiration_date TEXT,
-   created_at TIMESTAMP,
-   updated_at TIMESTAMP
+   expiration_date timestamptz,
+   created_at timestamptz,
+   updated_at timestamptz
 );
