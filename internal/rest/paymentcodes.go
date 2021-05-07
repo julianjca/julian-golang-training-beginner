@@ -43,6 +43,12 @@ func (s paymentCodeServiceHandler) Create(w http.ResponseWriter, r *http.Request
 		w.Write([]byte(`{"message":"error"}`))
 	}
 
+	if p.Name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(`{"message":"bad request"}`))
+		return
+	}
+
 	err = s.service.Create(p)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
