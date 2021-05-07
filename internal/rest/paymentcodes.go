@@ -18,7 +18,7 @@ type GetByIDRes struct {
 	Name string `json:"name"`
 }
 
-// InitVirtualAccountsRESTHandler will initialize the REST handler for Virtual Account Settings
+// InitPaymentCodeRESTHandler will initialize the REST handler for Payment Code
 func InitPaymentCodeRESTHandler(r *httprouter.Router, service golangtraining.IPaymentCodeService) {
 	h := paymentCodeServiceHandler{
 		service: service,
@@ -35,12 +35,14 @@ func (s paymentCodeServiceHandler) Create(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(`{"message":"error"}`))
+		return
 	}
 
 	var p *golangtraining.PaymentCode
 	if err = json.Unmarshal(b, &p); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(`{"message":"error"}`))
+		return
 	}
 
 	if p.Name == "" {
@@ -53,6 +55,7 @@ func (s paymentCodeServiceHandler) Create(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(`{"message":"error creating"}`))
+		return
 	}
 
 	e, err := json.Marshal(p)

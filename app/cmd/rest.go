@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	rest "github.com/julianjca/julian-golang-training-beginner/internal/rest"
-	httprouter "github.com/julienschmidt/httprouter"
+	"github.com/julienschmidt/httprouter"
 )
 
 func Execute() {

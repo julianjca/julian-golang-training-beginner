@@ -20,11 +20,11 @@ func NewPaymentCodeRepository(db *sql.DB) golangtraining.IPaymentCodeRepository 
 	}
 }
 
-func (t paymentCodeRepository) Create(p *golangtraining.PaymentCode) (res *golangtraining.PaymentCode, err error) {
+func (t paymentCodeRepository) Create(p *golangtraining.PaymentCode) (*golangtraining.PaymentCode, error) {
 	newUUID, err := uuid.NewRandom()
 	if err != nil {
 		err = errors.Wrap(err, "can't generate the UUID")
-		return
+		return nil, err
 	}
 
 	p.ID = newUUID.String()
@@ -44,12 +44,16 @@ func (t paymentCodeRepository) Create(p *golangtraining.PaymentCode) (res *golan
 	_, err = query.RunWith(t.DB).Exec()
 	if err != nil {
 		err = errors.Wrap(err, "error creating data")
+		return nil, err
 	}
 
 	return p, nil
 }
 
-func (t paymentCodeRepository) GetByID(ID string) (res golangtraining.PaymentCode, err error) {
+func (t paymentCodeRepository) GetByID(ID string) (golangtraining.PaymentCode, error) {
+	var res golangtraining.PaymentCode
+	var err error
+
 	query := sq.
 		Select("*").
 		Where(sq.Eq{"id": ID}).
