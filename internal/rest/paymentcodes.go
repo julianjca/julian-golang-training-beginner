@@ -2,7 +2,6 @@ package rest
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -34,22 +33,26 @@ func (s paymentCodeServiceHandler) Create(w http.ResponseWriter, r *http.Request
 
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"message":"error"}`))
 	}
 
 	var p *golangtraining.PaymentCode
 	if err = json.Unmarshal(b, &p); err != nil {
-		fmt.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"message":"error"}`))
 	}
 
 	err = s.service.Create(p)
 	if err != nil {
-		fmt.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"message":"error creating"}`))
 	}
 
 	e, err := json.Marshal(p)
-
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"message":"error"}`))
 		return
 	}
 
