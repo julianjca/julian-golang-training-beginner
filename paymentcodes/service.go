@@ -31,8 +31,8 @@ func (s service) Create(p *golangtraining.PaymentCode) error {
 	return nil
 }
 
-func (s service) GetByID(ID string) (res *golangtraining.PaymentCode, err error) {
-	res, err = s.repo.GetByID("123")
+func (s service) GetByID(ID string) (res golangtraining.PaymentCode, err error) {
+	res, err = s.repo.GetByID(ID)
 	if err != nil {
 		fmt.Println(err)
 		return

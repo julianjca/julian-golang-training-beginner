@@ -49,6 +49,20 @@ func (t paymentCodeRepository) Create(p *golangtraining.PaymentCode) (res *golan
 	return p, nil
 }
 
-func (t paymentCodeRepository) GetByID(ID string) (res *golangtraining.PaymentCode, err error) {
-	return
+func (t paymentCodeRepository) GetByID(ID string) (res golangtraining.PaymentCode, err error) {
+	query := sq.
+		Select("*").
+		Where(sq.Eq{"id": ID}).
+		From("payment_codes").
+		PlaceholderFormat(sq.Dollar)
+
+	err = query.RunWith(t.DB).QueryRow().Scan(
+		&res.ID, &res.PaymentCode, &res.Name, &res.Status, &res.ExpirationDate, &res.CreatedAt, &res.UpdatedAt,
+	)
+
+	if err != nil {
+		return res, errors.New("not found")
+	}
+
+	return res, nil
 }

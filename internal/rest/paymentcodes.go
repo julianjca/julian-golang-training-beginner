@@ -14,6 +14,11 @@ type paymentCodeServiceHandler struct {
 	service golangtraining.IPaymentCodeService
 }
 
+type GetByIDRes struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 // InitVirtualAccountsRESTHandler will initialize the REST handler for Virtual Account Settings
 func InitPaymentCodeRESTHandler(r *httprouter.Router, service golangtraining.IPaymentCodeService) {
 	h := paymentCodeServiceHandler{
@@ -52,19 +57,25 @@ func (s paymentCodeServiceHandler) Create(w http.ResponseWriter, r *http.Request
 	w.Write(e)
 }
 
-func (s paymentCodeServiceHandler) GetByID(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (s paymentCodeServiceHandler) GetByID(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
-	params := httprouter.ParamsFromContext(r.Context())
+	pID := ps.ByName("id")
 
-	w.WriteHeader(http.StatusOK)
-	res, err := s.service.GetByID(params.ByName("id"))
-	jsonData := res
-
-	e, err := json.Marshal(jsonData)
-
+	res, err := s.service.GetByID(pID)
 	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(`{"message":"not found"}`))
 		return
 	}
 
+	e, err := json.Marshal(res)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"message":"error"}`))
+
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 	w.Write(e)
 }
