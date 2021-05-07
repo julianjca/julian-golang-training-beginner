@@ -1,17 +1,10 @@
 package paymentcodes
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
 
 	golangtraining "github.com/julianjca/julian-golang-training-beginner"
-	"github.com/julienschmidt/httprouter"
 )
-
-type CreateResponse struct {
-	Status string
-}
 
 type GetByIDResponse struct {
 	ID string
@@ -30,41 +23,20 @@ func NewService(
 	}
 }
 
-func (s service) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json")
-
-	paymentCodeBody := &golangtraining.PaymentCode{
-		Status: "ACTIVE",
-	}
-
-	w.WriteHeader(http.StatusOK)
-	s.repo.Create(paymentCodeBody)
-	jsonData := CreateResponse{Status: "123"}
-
-	e, err := json.Marshal(jsonData)
-
+func (s service) Create(p *golangtraining.PaymentCode) error {
+	_, err := s.repo.Create(p)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
-
-	w.Write(e)
-
+	return nil
 }
 
-func (s service) GetByID(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json")
-
-	w.WriteHeader(http.StatusOK)
-	s.repo.GetByID("123")
-	jsonData := GetByIDResponse{ID: ps.ByName("id")}
-
-	e, err := json.Marshal(jsonData)
-
+func (s service) GetByID(ID string) (res *golangtraining.PaymentCode, err error) {
+	res, err = s.repo.GetByID("123")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	w.Write(e)
+	return
 }
