@@ -1,10 +1,11 @@
-package main
+package rest
 
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 type HealthResponse struct {
@@ -15,7 +16,7 @@ type HelloResponse struct {
 	Message string `json:"message"`
 }
 
-func healthCheck(w http.ResponseWriter, r *http.Request) {
+func healthCheck(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusOK)
@@ -31,7 +32,7 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 	w.Write(e)
 }
 
-func helloWorld(w http.ResponseWriter, r *http.Request) {
+func helloWorld(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusOK)
@@ -47,15 +48,8 @@ func helloWorld(w http.ResponseWriter, r *http.Request) {
 	w.Write(e)
 }
 
-func handleRequests() {
-	port := ":3000"
-	http.HandleFunc("/health", healthCheck)
-	http.HandleFunc("/hello-world", helloWorld)
+func InitHandler(r *httprouter.Router) {
 
-	log.Println("listen on", port)
-	log.Fatal(http.ListenAndServe(port, nil))
-}
-
-func main() {
-	handleRequests()
+	r.GET("/health", healthCheck)
+	r.GET("/hello-world", helloWorld)
 }
