@@ -9,18 +9,20 @@ import (
 type GetByIDResponse struct {
 	ID string
 }
-type repository interface {
+
+//go:generate mockgen -destination=mocks/mock_paymentcodes_repo.go -package=mocks . Repository
+type Repository interface {
 	Create(p *golangtraining.PaymentCode) (*golangtraining.PaymentCode, error)
 	GetByID(ID string) (golangtraining.PaymentCode, error)
 }
 
 type PaymentCodeService struct {
-	repo repository
+	repo Repository
 }
 
 // NewService will initialize the implementations of VA Settings service
 func NewService(
-	repo repository,
+	repo Repository,
 ) *PaymentCodeService {
 	return &PaymentCodeService{
 		repo: repo,

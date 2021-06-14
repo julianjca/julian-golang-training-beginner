@@ -9,13 +9,14 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-type service interface {
+//go:generate mockgen -destination=mocks/mock_paymentcodes_service.go -package=mocks . Service
+type Service interface {
 	Create(p *golangtraining.PaymentCode) error
 	GetByID(ID string) (golangtraining.PaymentCode, error)
 }
 
 type paymentCodeServiceHandler struct {
-	service service
+	service Service
 }
 
 type GetByIDRes struct {
@@ -24,7 +25,7 @@ type GetByIDRes struct {
 }
 
 // InitPaymentCodeRESTHandler will initialize the REST handler for Payment Code
-func InitPaymentCodeRESTHandler(r *httprouter.Router, service service) {
+func InitPaymentCodeRESTHandler(r *httprouter.Router, service Service) {
 	h := paymentCodeServiceHandler{
 		service: service,
 	}
