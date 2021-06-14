@@ -9,21 +9,25 @@ import (
 type GetByIDResponse struct {
 	ID string
 }
+type repository interface {
+	Create(p *golangtraining.PaymentCode) (*golangtraining.PaymentCode, error)
+	GetByID(ID string) (golangtraining.PaymentCode, error)
+}
 
-type service struct {
-	repo golangtraining.IPaymentCodeRepository
+type PaymentCodeService struct {
+	repo repository
 }
 
 // NewService will initialize the implementations of VA Settings service
 func NewService(
-	repo golangtraining.IPaymentCodeRepository,
-) golangtraining.IPaymentCodeService {
-	return &service{
+	repo repository,
+) *PaymentCodeService {
+	return &PaymentCodeService{
 		repo: repo,
 	}
 }
 
-func (s service) Create(p *golangtraining.PaymentCode) error {
+func (s PaymentCodeService) Create(p *golangtraining.PaymentCode) error {
 	_, err := s.repo.Create(p)
 	if err != nil {
 		return err
@@ -31,7 +35,7 @@ func (s service) Create(p *golangtraining.PaymentCode) error {
 	return nil
 }
 
-func (s service) GetByID(ID string) (res golangtraining.PaymentCode, err error) {
+func (s PaymentCodeService) GetByID(ID string) (res golangtraining.PaymentCode, err error) {
 	res, err = s.repo.GetByID(ID)
 	if err != nil {
 		fmt.Println(err)

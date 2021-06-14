@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 
-	golangtraining "github.com/julianjca/julian-golang-training-beginner"
 	postgres "github.com/julianjca/julian-golang-training-beginner/internal/postgres"
 	paymentcode "github.com/julianjca/julian-golang-training-beginner/paymentcodes"
 	_ "github.com/lib/pq"
@@ -19,8 +18,8 @@ const (
 )
 
 var (
-	paymentCodeRepository golangtraining.IPaymentCodeRepository
-	paymentCodeService    golangtraining.IPaymentCodeService
+	paymentCodeRepository *postgres.PaymentCodeRepository
+	paymentCodeService    *paymentcode.PaymentCodeService
 )
 
 func init() {

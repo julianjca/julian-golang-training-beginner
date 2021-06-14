@@ -13,13 +13,3 @@ type PaymentCode struct {
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }
-
-type IPaymentCodeService interface {
-	Create(p *PaymentCode) error
-	GetByID(ID string) (res PaymentCode, err error)
-}
-
-type IPaymentCodeRepository interface {
-	Create(p *PaymentCode) (res *PaymentCode, err error)
-	GetByID(ID string) (res PaymentCode, err error)
-}

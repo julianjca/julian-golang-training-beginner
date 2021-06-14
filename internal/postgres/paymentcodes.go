@@ -10,17 +10,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-type paymentCodeRepository struct {
+type PaymentCodeRepository struct {
 	DB *sql.DB
 }
 
-func NewPaymentCodeRepository(db *sql.DB) golangtraining.IPaymentCodeRepository {
-	return &paymentCodeRepository{
+func NewPaymentCodeRepository(db *sql.DB) *PaymentCodeRepository {
+	return &PaymentCodeRepository{
 		DB: db,
 	}
 }
 
-func (t paymentCodeRepository) Create(p *golangtraining.PaymentCode) (*golangtraining.PaymentCode, error) {
+func (t PaymentCodeRepository) Create(p *golangtraining.PaymentCode) (*golangtraining.PaymentCode, error) {
 	newUUID, err := uuid.NewRandom()
 	if err != nil {
 		err = errors.Wrap(err, "can't generate the UUID")
@@ -50,7 +50,7 @@ func (t paymentCodeRepository) Create(p *golangtraining.PaymentCode) (*golangtra
 	return p, nil
 }
 
-func (t paymentCodeRepository) GetByID(ID string) (golangtraining.PaymentCode, error) {
+func (t PaymentCodeRepository) GetByID(ID string) (golangtraining.PaymentCode, error) {
 	var res golangtraining.PaymentCode
 	var err error
 
