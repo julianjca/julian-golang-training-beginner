@@ -72,3 +72,27 @@ func (s paymentCodesTestSuite) TestCreatePaymentCode() {
 		})
 	}
 }
+
+func (s paymentCodesTestSuite) TestGetPaymentCodeByID() {
+	repo := NewPaymentCodeRepository(s.DBConn)
+	subCompanyCodes := CreateMockPaymentCode()
+	testCases := []struct {
+		desc        string
+		expectedErr error
+		body        *golangtraining.PaymentCode
+	}{
+		{
+			desc:        "get-success",
+			expectedErr: nil,
+			body:        &subCompanyCodes,
+		},
+	}
+
+	for _, tC := range testCases {
+		s.T().Run(tC.desc, func(t *testing.T) {
+			p, err := repo.Create(tC.body)
+			_, err = repo.GetByID(p.ID)
+			s.Require().Equal(tC.expectedErr, errors.Cause(err))
+		})
+	}
+}
