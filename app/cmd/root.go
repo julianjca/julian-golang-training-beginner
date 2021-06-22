@@ -34,12 +34,11 @@ func init() {
 	db, err := sql.Open("postgres", psqlInfo)
 	paymentCodeRepository = postgres.NewPaymentCodeRepository(db)
 	starwarsClient := starwars.NewStarWarsClient(httpClient)
-	paymentCodeService = paymentcode.NewService(paymentCodeRepository, *starwarsClient)
+	paymentCodeService = paymentcode.NewService(paymentCodeRepository, starwarsClient)
 
 	if err != nil {
 		panic(err)
 	}
-	// defer db.Close()
 
 	err = db.Ping()
 	if err != nil {

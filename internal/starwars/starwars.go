@@ -2,11 +2,9 @@ package starwars
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"path"
 
 	golangtraining "github.com/julianjca/julian-golang-training-beginner"
 )
@@ -18,35 +16,33 @@ type Client struct {
 
 func NewStarWarsClient(httpClient *http.Client) *Client {
 	return &Client{
-		BaseURL:    "https://swapi.dev/api",
+		BaseURL:    "https://swapi.dev/api/people",
 		HTTPClient: httpClient,
 	}
 }
 
-func (r *Client) GetCharacters() (resp *http.Response, err error) {
+func (r *Client) GetCharacters() (*golangtraining.StarWarsResponse, error) {
 	u, err := url.Parse(r.BaseURL)
-	req, err := http.NewRequest(http.MethodGet, u.Path, nil)
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	req.Header.Set("Accept", "application/json")
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	u.Path = path.Join(u.Path, fmt.Sprintf("/people"))
-
-	resp, err = r.HTTPClient.Do(req)
+	resp, err := r.HTTPClient.Do(req)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	jbyt, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return
+		return nil, err
 	}
-	var res []golangtraining.StarWarsResponse
+	var res *golangtraining.StarWarsResponse
 	err = json.Unmarshal(jbyt, &res)
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	return
+	return res, nil
 }

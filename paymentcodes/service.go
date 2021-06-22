@@ -18,7 +18,7 @@ type Repository interface {
 
 //go:generate mockgen -destination=mocks/mock_starwars_client.go -package=mocks . StarWarsClient
 type StarWarsClient interface {
-	GetCharacters() (*golangtraining.PaymentCode, error)
+	GetCharacters() (*golangtraining.StarWarsResponse, error)
 }
 
 type PaymentCodeService struct {
@@ -38,7 +38,8 @@ func NewService(
 }
 
 func (s PaymentCodeService) Create(p *golangtraining.PaymentCode) error {
-	_, err := s.repo.Create(p)
+	_, err := s.starwarsClient.GetCharacters()
+	_, err = s.repo.Create(p)
 	if err != nil {
 		return err
 	}

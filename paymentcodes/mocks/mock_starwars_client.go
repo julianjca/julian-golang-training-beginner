@@ -35,10 +35,10 @@ func (m *MockStarWarsClient) EXPECT() *MockStarWarsClientMockRecorder {
 }
 
 // GetCharacters mocks base method.
-func (m *MockStarWarsClient) GetCharacters() (*golangtraining.PaymentCode, error) {
+func (m *MockStarWarsClient) GetCharacters() (*golangtraining.StarWarsResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCharacters")
-	ret0, _ := ret[0].(*golangtraining.PaymentCode)
+	ret0, _ := ret[0].(*golangtraining.StarWarsResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
