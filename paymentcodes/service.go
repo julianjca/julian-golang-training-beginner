@@ -16,16 +16,24 @@ type Repository interface {
 	GetByID(ID string) (golangtraining.PaymentCode, error)
 }
 
+//go:generate mockgen -destination=mocks/mock_starwars_client.go -package=mocks . StarWarsClient
+type StarWarsClient interface {
+	GetCharacters() (*golangtraining.PaymentCode, error)
+}
+
 type PaymentCodeService struct {
-	repo Repository
+	repo           Repository
+	starwarsClient StarWarsClient
 }
 
 // NewService will initialize the implementations of VA Settings service
 func NewService(
 	repo Repository,
+	starwarsClient StarWarsClient,
 ) *PaymentCodeService {
 	return &PaymentCodeService{
-		repo: repo,
+		repo:           repo,
+		starwarsClient: starwarsClient,
 	}
 }
 

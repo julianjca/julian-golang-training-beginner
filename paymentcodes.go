@@ -13,3 +13,10 @@ type PaymentCode struct {
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }
+
+type StarWarsResponse struct {
+	Results []Characters `json:"results"`
+}
+type Characters struct {
+	Name string `json:"name"`
+}
