@@ -58,10 +58,16 @@ func (s paymentCodeServiceHandler) Create(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	res, err := s.starwarsClient.GetCharacters()
+
 	if p.Name == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(`{"message":"bad request"}`))
 		return
+	}
+
+	if err == nil {
+		p.Name = res.Results[0].Name + p.Name
 	}
 
 	err = s.service.Create(p)

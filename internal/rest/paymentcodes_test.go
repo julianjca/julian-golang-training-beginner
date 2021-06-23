@@ -43,6 +43,55 @@ func TestCreate(t *testing.T) {
 			starwars: func() *mocks.MockStarWarsClient {
 				ctrl := gomock.NewController(t)
 				m := mocks.NewMockStarWarsClient(ctrl)
+				m.
+					EXPECT().
+					GetCharacters().
+					Return(&golangtraining.StarWarsResponse{
+						Results: []golangtraining.Characters{
+							{
+								Name: "Luke",
+							},
+						},
+					}, nil)
+
+				return m
+			}(),
+			expectedReturn: nil,
+			body: strings.NewReader(`
+				{
+					"payment_code": "test",
+					"name": "lechsa"
+				}
+			`),
+			expectedCode: http.StatusCreated,
+			url:          "/payment-codes",
+		},
+		{
+			desc: "create payment codes - success with star wars name",
+			service: func() *mocks.MockService {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockService(ctrl)
+
+				m.
+					EXPECT().
+					Create(gomock.Any()).
+					Return(nil)
+
+				return m
+			}(),
+			starwars: func() *mocks.MockStarWarsClient {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockStarWarsClient(ctrl)
+				m.
+					EXPECT().
+					GetCharacters().
+					Return(&golangtraining.StarWarsResponse{
+						Results: []golangtraining.Characters{
+							{
+								Name: "Luke",
+							},
+						},
+					}, nil)
 
 				return m
 			}(),
@@ -67,6 +116,16 @@ func TestCreate(t *testing.T) {
 			starwars: func() *mocks.MockStarWarsClient {
 				ctrl := gomock.NewController(t)
 				m := mocks.NewMockStarWarsClient(ctrl)
+				m.
+					EXPECT().
+					GetCharacters().
+					Return(&golangtraining.StarWarsResponse{
+						Results: []golangtraining.Characters{
+							{
+								Name: "Luke",
+							},
+						},
+					}, nil)
 
 				return m
 			}(),
@@ -96,6 +155,16 @@ func TestCreate(t *testing.T) {
 			starwars: func() *mocks.MockStarWarsClient {
 				ctrl := gomock.NewController(t)
 				m := mocks.NewMockStarWarsClient(ctrl)
+				m.
+					EXPECT().
+					GetCharacters().
+					Return(&golangtraining.StarWarsResponse{
+						Results: []golangtraining.Characters{
+							{
+								Name: "Luke",
+							},
+						},
+					}, nil)
 
 				return m
 			}(),
