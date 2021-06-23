@@ -67,7 +67,7 @@ func (s paymentCodeServiceHandler) Create(w http.ResponseWriter, r *http.Request
 	}
 
 	if err == nil {
-		p.Name = res.Results[0].Name + p.Name
+		p.Name = res.Results[0].Name + " " + p.Name
 	}
 
 	err = s.service.Create(p)

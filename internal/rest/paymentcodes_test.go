@@ -1,8 +1,11 @@
 package rest_test
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -22,7 +25,7 @@ func TestCreate(t *testing.T) {
 		desc           string
 		service        *mocks.MockService
 		starwars       *mocks.MockStarWarsClient
-		expectedReturn error
+		expectedReturn *golangtraining.PaymentCode
 		url            string
 		body           io.Reader
 		expectedCode   int
@@ -56,7 +59,9 @@ func TestCreate(t *testing.T) {
 
 				return m
 			}(),
-			expectedReturn: nil,
+			expectedReturn: &golangtraining.PaymentCode{
+				Name: "Luke lechsa",
+			},
 			body: strings.NewReader(`
 				{
 					"payment_code": "test",
@@ -95,7 +100,44 @@ func TestCreate(t *testing.T) {
 
 				return m
 			}(),
-			expectedReturn: nil,
+			expectedReturn: &golangtraining.PaymentCode{
+				Name: "Luke lechsa",
+			},
+			body: strings.NewReader(`
+				{
+					"payment_code": "test",
+					"name": "lechsa"
+				}
+			`),
+			expectedCode: http.StatusCreated,
+			url:          "/payment-codes",
+		},
+		{
+			desc: "create payment codes - success without star wars name",
+			service: func() *mocks.MockService {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockService(ctrl)
+
+				m.
+					EXPECT().
+					Create(gomock.Any()).
+					Return(nil)
+
+				return m
+			}(),
+			starwars: func() *mocks.MockStarWarsClient {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockStarWarsClient(ctrl)
+				m.
+					EXPECT().
+					GetCharacters().
+					Return(nil, errors.New("error from swapi"))
+
+				return m
+			}(),
+			expectedReturn: &golangtraining.PaymentCode{
+				Name: "lechsa",
+			},
 			body: strings.NewReader(`
 				{
 					"payment_code": "test",
@@ -190,7 +232,19 @@ func TestCreate(t *testing.T) {
 			rec := httptest.NewRecorder()
 
 			r.ServeHTTP(rec, req)
+			res, _ := ioutil.ReadAll(rec.Result().Body)
+			var pRes *golangtraining.PaymentCode
+			if err := json.Unmarshal(res, &pRes); err != nil {
+				fmt.Println("error")
+				return
+			}
+
 			require.Equal(t, tC.expectedCode, rec.Code)
+
+			if tC.expectedCode < 400 {
+				require.Equal(t, tC.expectedReturn.Name, pRes.Name)
+			}
+
 		})
 	}
 }
@@ -273,6 +327,7 @@ func TestGetByID(t *testing.T) {
 			rec := httptest.NewRecorder()
 
 			r.ServeHTTP(rec, req)
+
 			require.Equal(t, tC.expectedCode, rec.Code)
 		})
 	}
