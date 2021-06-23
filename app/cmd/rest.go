@@ -17,7 +17,7 @@ func Execute() {
 
 	httpClient := initHttpClient()
 	rest.InitHandler(r)
-	starwarsClient := starwars.NewStarWarsClient(httpClient)
+	starwarsClient := starwars.NewStarWarsClient(httpClient, "https://swapi.dev/api/people")
 
 	rest.InitPaymentCodeRESTHandler(r, paymentCodeService, starwarsClient)
 

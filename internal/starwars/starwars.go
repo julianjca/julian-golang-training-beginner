@@ -14,9 +14,9 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-func NewStarWarsClient(httpClient *http.Client) *Client {
+func NewStarWarsClient(httpClient *http.Client, BaseURL string) *Client {
 	return &Client{
-		BaseURL:    "https://swapi.dev/api/people",
+		BaseURL:    BaseURL,
 		HTTPClient: httpClient,
 	}
 }

@@ -15,7 +15,7 @@ func TestGetCharacters(t *testing.T) {
 	expectedRes := &golangtraining.StarWarsResponse{
 		Results: []golangtraining.Characters{
 			{
-				Name: "Luke Skywalker",
+				Name: "Luke",
 			},
 		},
 	}
@@ -25,7 +25,6 @@ func TestGetCharacters(t *testing.T) {
 
 	handler := func() (res http.Handler) {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			require.Equal(t, "https://swapi.dev/api/people", r.URL.String())
 			w.WriteHeader(http.StatusOK)
 			_, err = w.Write(jsonResp)
 			require.NoError(t, err)
@@ -34,7 +33,7 @@ func TestGetCharacters(t *testing.T) {
 	mockServer := httptest.NewServer(handler)
 	defer mockServer.Close()
 
-	starwarsClient := starwars.NewStarWarsClient(http.DefaultClient)
+	starwarsClient := starwars.NewStarWarsClient(http.DefaultClient, mockServer.URL)
 	res, err := starwarsClient.GetCharacters()
 	require.NoError(t, err)
 	require.Equal(t, expectedRes.Results[0], res.Results[0])
