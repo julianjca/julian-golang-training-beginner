@@ -52,22 +52,28 @@ func CreateMockPaymentCode() (mockVaSettings golangtraining.PaymentCode) {
 
 func (s paymentCodesTestSuite) TestCreatePaymentCode() {
 	repo := NewPaymentCodeRepository(s.DBConn)
-	subCompanyCodes := CreateMockPaymentCode()
+	paymentCode := CreateMockPaymentCode()
 	testCases := []struct {
 		desc        string
 		expectedErr error
 		body        *golangtraining.PaymentCode
+		expectedRes *golangtraining.PaymentCode
 	}{
 		{
 			desc:        "insert-success",
 			expectedErr: nil,
-			body:        &subCompanyCodes,
+			body:        &paymentCode,
+			expectedRes: &paymentCode,
 		},
 	}
 
 	for _, tC := range testCases {
 		s.T().Run(tC.desc, func(t *testing.T) {
-			_, err := repo.Create(tC.body)
+			res, err := repo.Create(tC.body)
+			s.Require().Equal(tC.expectedRes.Name, res.Name)
+			s.Require().Equal(tC.expectedRes.PaymentCode, res.PaymentCode)
+			s.Require().Equal(tC.expectedRes.Status, res.Status)
+
 			s.Require().Equal(tC.expectedErr, errors.Cause(err))
 		})
 	}
