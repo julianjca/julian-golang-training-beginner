@@ -9,13 +9,20 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-type service interface {
+//go:generate mockgen -destination=mocks/mock_paymentcodes_service.go -package=mocks . Service
+type Service interface {
 	Create(p *golangtraining.PaymentCode) error
 	GetByID(ID string) (golangtraining.PaymentCode, error)
 }
 
+//go:generate mockgen -destination=mocks/mock_starwars_client.go -package=mocks . StarWarsClient
+type StarWarsClient interface {
+	GetCharacters() (*golangtraining.StarWarsResponse, error)
+}
+
 type paymentCodeServiceHandler struct {
-	service service
+	service        Service
+	starwarsClient StarWarsClient
 }
 
 type GetByIDRes struct {
@@ -24,9 +31,10 @@ type GetByIDRes struct {
 }
 
 // InitPaymentCodeRESTHandler will initialize the REST handler for Payment Code
-func InitPaymentCodeRESTHandler(r *httprouter.Router, service service) {
+func InitPaymentCodeRESTHandler(r *httprouter.Router, service Service, starwarsClient StarWarsClient) {
 	h := paymentCodeServiceHandler{
-		service: service,
+		service:        service,
+		starwarsClient: starwarsClient,
 	}
 
 	r.POST("/payment-codes", h.Create)
@@ -50,10 +58,16 @@ func (s paymentCodeServiceHandler) Create(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	res, err := s.starwarsClient.GetCharacters()
+
 	if p.Name == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(`{"message":"bad request"}`))
 		return
+	}
+
+	if err == nil {
+		p.Name = res.Results[0].Name + " " + p.Name
 	}
 
 	err = s.service.Create(p)
