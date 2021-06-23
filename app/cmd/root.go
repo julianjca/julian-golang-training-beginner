@@ -3,11 +3,8 @@ package cmd
 import (
 	"database/sql"
 	"fmt"
-	"net/http"
-	"time"
 
 	postgres "github.com/julianjca/julian-golang-training-beginner/internal/postgres"
-	starwars "github.com/julianjca/julian-golang-training-beginner/internal/starwars"
 	paymentcode "github.com/julianjca/julian-golang-training-beginner/paymentcodes"
 	_ "github.com/lib/pq"
 )
@@ -26,15 +23,13 @@ var (
 )
 
 func init() {
-	httpClient := initHttpClient()
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
 	db, err := sql.Open("postgres", psqlInfo)
 	paymentCodeRepository = postgres.NewPaymentCodeRepository(db)
-	starwarsClient := starwars.NewStarWarsClient(httpClient)
-	paymentCodeService = paymentcode.NewService(paymentCodeRepository, starwarsClient)
+	paymentCodeService = paymentcode.NewService(paymentCodeRepository)
 
 	if err != nil {
 		panic(err)
@@ -47,13 +42,4 @@ func init() {
 
 	fmt.Println("Successfully connected!")
 
-}
-
-func initHttpClient() *http.Client {
-	return &http.Client{
-		Transport: &http.Transport{
-			MaxIdleConnsPerHost: 20,
-		},
-		Timeout: 10 * time.Second,
-	}
 }

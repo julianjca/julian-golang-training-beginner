@@ -15,8 +15,14 @@ type Service interface {
 	GetByID(ID string) (golangtraining.PaymentCode, error)
 }
 
+//go:generate mockgen -destination=mocks/mock_starwars_client.go -package=mocks . StarWarsClient
+type StarWarsClient interface {
+	GetCharacters() (*golangtraining.StarWarsResponse, error)
+}
+
 type paymentCodeServiceHandler struct {
-	service Service
+	service        Service
+	starwarsClient StarWarsClient
 }
 
 type GetByIDRes struct {
@@ -25,9 +31,10 @@ type GetByIDRes struct {
 }
 
 // InitPaymentCodeRESTHandler will initialize the REST handler for Payment Code
-func InitPaymentCodeRESTHandler(r *httprouter.Router, service Service) {
+func InitPaymentCodeRESTHandler(r *httprouter.Router, service Service, starwarsClient StarWarsClient) {
 	h := paymentCodeServiceHandler{
-		service: service,
+		service:        service,
+		starwarsClient: starwarsClient,
 	}
 
 	r.POST("/payment-codes", h.Create)

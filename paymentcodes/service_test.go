@@ -15,7 +15,6 @@ func TestCreatePaymentCode(t *testing.T) {
 	testCases := []struct {
 		desc           string
 		repo           *mocks.MockRepository
-		starwars       *mocks.MockStarWarsClient
 		expectedReturn error
 	}{
 		{
@@ -38,12 +37,7 @@ func TestCreatePaymentCode(t *testing.T) {
 
 				return m
 			}(),
-			starwars: func() *mocks.MockStarWarsClient {
-				ctrl := gomock.NewController(t)
-				m := mocks.NewMockStarWarsClient(ctrl)
 
-				return m
-			}(),
 			expectedReturn: nil,
 		},
 		{
@@ -59,19 +53,14 @@ func TestCreatePaymentCode(t *testing.T) {
 
 				return m
 			}(),
-			starwars: func() *mocks.MockStarWarsClient {
-				ctrl := gomock.NewController(t)
-				m := mocks.NewMockStarWarsClient(ctrl)
 
-				return m
-			}(),
 			expectedReturn: errors.New("Unknown Error"),
 		},
 	}
 
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			service := paymentcodes.NewService(tC.repo, tC.starwars)
+			service := paymentcodes.NewService(tC.repo)
 			err := service.Create(&golangtraining.PaymentCode{})
 
 			require.Equal(t, tC.expectedReturn, err)
@@ -83,7 +72,6 @@ func TestGetByID(t *testing.T) {
 	testCases := []struct {
 		desc           string
 		repo           *mocks.MockRepository
-		starwars       *mocks.MockStarWarsClient
 		expectedReturn golangtraining.PaymentCode
 		expectedError  error
 	}{
@@ -107,12 +95,7 @@ func TestGetByID(t *testing.T) {
 
 				return m
 			}(),
-			starwars: func() *mocks.MockStarWarsClient {
-				ctrl := gomock.NewController(t)
-				m := mocks.NewMockStarWarsClient(ctrl)
 
-				return m
-			}(),
 			expectedReturn: golangtraining.PaymentCode{
 				ID:          "1a510335-83eb-49f4-a121-9dc2d7a11348",
 				Name:        "Name",
@@ -134,12 +117,7 @@ func TestGetByID(t *testing.T) {
 
 				return m
 			}(),
-			starwars: func() *mocks.MockStarWarsClient {
-				ctrl := gomock.NewController(t)
-				m := mocks.NewMockStarWarsClient(ctrl)
 
-				return m
-			}(),
 			expectedReturn: golangtraining.PaymentCode{},
 			expectedError:  errors.New("Unknown Error"),
 		},
@@ -147,7 +125,7 @@ func TestGetByID(t *testing.T) {
 
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			service := paymentcodes.NewService(tC.repo, tC.starwars)
+			service := paymentcodes.NewService(tC.repo)
 			res, err := service.GetByID("id")
 
 			if err != nil {

@@ -21,6 +21,7 @@ func TestCreate(t *testing.T) {
 	testCases := []struct {
 		desc           string
 		service        *mocks.MockService
+		starwars       *mocks.MockStarWarsClient
 		expectedReturn error
 		url            string
 		body           io.Reader
@@ -39,6 +40,12 @@ func TestCreate(t *testing.T) {
 
 				return m
 			}(),
+			starwars: func() *mocks.MockStarWarsClient {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockStarWarsClient(ctrl)
+
+				return m
+			}(),
 			expectedReturn: nil,
 			body: strings.NewReader(`
 				{
@@ -54,6 +61,12 @@ func TestCreate(t *testing.T) {
 			service: func() *mocks.MockService {
 				ctrl := gomock.NewController(t)
 				m := mocks.NewMockService(ctrl)
+
+				return m
+			}(),
+			starwars: func() *mocks.MockStarWarsClient {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockStarWarsClient(ctrl)
 
 				return m
 			}(),
@@ -80,6 +93,12 @@ func TestCreate(t *testing.T) {
 
 				return m
 			}(),
+			starwars: func() *mocks.MockStarWarsClient {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockStarWarsClient(ctrl)
+
+				return m
+			}(),
 			expectedReturn: nil,
 			body: strings.NewReader(`
 				{
@@ -95,7 +114,7 @@ func TestCreate(t *testing.T) {
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
 			r := httprouter.New()
-			rest.InitPaymentCodeRESTHandler(r, tC.service)
+			rest.InitPaymentCodeRESTHandler(r, tC.service, tC.starwars)
 
 			req := httptest.NewRequest("POST", tC.url, tC.body)
 			req.Header.Set("Content-Type", "application/json")
@@ -111,6 +130,7 @@ func TestGetByID(t *testing.T) {
 	testCases := []struct {
 		desc           string
 		service        *mocks.MockService
+		starwars       *mocks.MockStarWarsClient
 		expectedReturn golangtraining.PaymentCode
 		url            string
 		expectedCode   int
@@ -130,6 +150,12 @@ func TestGetByID(t *testing.T) {
 					EXPECT().
 					GetByID(gomock.Any()).
 					Return(p, nil)
+
+				return m
+			}(),
+			starwars: func() *mocks.MockStarWarsClient {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockStarWarsClient(ctrl)
 
 				return m
 			}(),
@@ -153,6 +179,12 @@ func TestGetByID(t *testing.T) {
 
 				return m
 			}(),
+			starwars: func() *mocks.MockStarWarsClient {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockStarWarsClient(ctrl)
+
+				return m
+			}(),
 			expectedReturn: golangtraining.PaymentCode{
 				Name:        "test",
 				PaymentCode: "test-1",
@@ -165,7 +197,7 @@ func TestGetByID(t *testing.T) {
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
 			r := httprouter.New()
-			rest.InitPaymentCodeRESTHandler(r, tC.service)
+			rest.InitPaymentCodeRESTHandler(r, tC.service, tC.starwars)
 
 			req := httptest.NewRequest("GET", tC.url, nil)
 			req.Header.Set("Content-Type", "application/json")
