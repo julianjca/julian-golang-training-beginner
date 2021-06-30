@@ -49,12 +49,12 @@ func TestCreatePaymentCode(t *testing.T) {
 				m.
 					EXPECT().
 					Create(gomock.Any()).
-					Return(nil, errors.New("Unknown Error"))
+					Return(nil, errors.New("unknown error"))
 
 				return m
 			}(),
 
-			expectedReturn: errors.New("Unknown Error"),
+			expectedReturn: errors.New("unknown error"),
 		},
 	}
 
@@ -113,13 +113,13 @@ func TestGetByID(t *testing.T) {
 				m.
 					EXPECT().
 					GetByID(gomock.Any()).
-					Return(golangtraining.PaymentCode{}, errors.New("Unknown Error"))
+					Return(golangtraining.PaymentCode{}, errors.New("unknown error"))
 
 				return m
 			}(),
 
 			expectedReturn: golangtraining.PaymentCode{},
-			expectedError:  errors.New("Unknown Error"),
+			expectedError:  errors.New("unknown error"),
 		},
 	}
 
@@ -166,12 +166,12 @@ func TestExpire(t *testing.T) {
 				m.
 					EXPECT().
 					Expire().
-					Return(errors.New("Unknown Error"))
+					Return(errors.New("unknown error"))
 
 				return m
 			}(),
 
-			expectedError:  errors.New("Unknown Error"),
+			expectedError:  errors.New("unknown error"),
 		},
 	}
 
