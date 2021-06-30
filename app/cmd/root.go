@@ -3,22 +3,16 @@ package cmd
 import (
 	"database/sql"
 	"fmt"
+	"github.com/julianjca/julian-golang-training-beginner/app/cmd/helpers"
 	"log"
+	"strconv"
 
 	"github.com/julianjca/julian-golang-training-beginner/internal/jobs"
 	"github.com/spf13/cobra"
 
-	postgres "github.com/julianjca/julian-golang-training-beginner/internal/postgres"
+	"github.com/julianjca/julian-golang-training-beginner/internal/postgres"
 	paymentcode "github.com/julianjca/julian-golang-training-beginner/paymentcodes"
 	_ "github.com/lib/pq"
-)
-
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "password"
-	dbname   = "golang_training"
 )
 
 var (
@@ -36,6 +30,17 @@ func init() {
 }
 
 func initApp() {
+	host := helpers.MustHaveEnv("POSTGRES_HOST")
+	portStr := helpers.MustHaveEnv("POSTGRES_PORT")
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		log.Fatal(err, "POSTGRES_PORT is not well set ")
+	}
+	user := helpers.MustHaveEnv("POSTGRES_USER")
+	password := helpers.MustHaveEnv("POSTGRES_PASSWORD")
+	dbname := helpers.MustHaveEnv("POSTGRES_DB_NAME")
+
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
