@@ -136,3 +136,51 @@ func TestGetByID(t *testing.T) {
 		})
 	}
 }
+
+func TestExpire(t *testing.T) {
+	testCases := []struct {
+		desc           string
+		repo           *mocks.MockRepository
+		expectedError  error
+	}{
+		{
+			desc: "expire payment codes - success",
+			repo: func() *mocks.MockRepository {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockRepository(ctrl)
+				m.
+					EXPECT().
+					Expire().
+					Return(nil)
+
+				return m
+			}(),
+			expectedError: nil,
+		},
+		{
+			desc: "expire payment codes - failed",
+			repo: func() *mocks.MockRepository {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockRepository(ctrl)
+
+				m.
+					EXPECT().
+					Expire().
+					Return(errors.New("Unknown Error"))
+
+				return m
+			}(),
+
+			expectedError:  errors.New("Unknown Error"),
+		},
+	}
+
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			service := paymentcodes.NewService(tC.repo)
+			err := service.Expire()
+
+			require.Equal(t, tC.expectedError, err)
+		})
+	}
+}
