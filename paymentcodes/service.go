@@ -15,6 +15,7 @@ type GetByIDResponse struct {
 type Repository interface {
 	Create(p *golangtraining.PaymentCode) (*golangtraining.PaymentCode, error)
 	GetByID(ID string) (golangtraining.PaymentCode, error)
+	Expire() error
 }
 
 type PaymentCodeService struct {
@@ -49,4 +50,13 @@ func (s PaymentCodeService) GetByID(ID string) (res golangtraining.PaymentCode, 
 	}
 
 	return
+}
+
+func (s PaymentCodeService) Expire() error {
+	err := s.repo.Expire()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

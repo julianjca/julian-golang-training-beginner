@@ -1,9 +1,5 @@
 package jobs
 
-import (
-	"context"
-)
-
 type PaymentCodesService interface {
 	Expire() error
 }
@@ -14,7 +10,7 @@ type ExpirePaymentCodesJob struct {
 }
 
 // Work is the main function of the job
-func (j ExpirePaymentCodesJob) Work(ctx context.Context) (err error) {
+func (j ExpirePaymentCodesJob) Work() (err error) {
 	err = j.PaymentCodesService.Expire()
 	if err != nil {
 		return err

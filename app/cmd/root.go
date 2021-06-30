@@ -3,8 +3,10 @@ package cmd
 import (
 	"database/sql"
 	"fmt"
-	"github.com/spf13/cobra"
 	"log"
+
+	"github.com/julianjca/julian-golang-training-beginner/internal/jobs"
+	"github.com/spf13/cobra"
 
 	postgres "github.com/julianjca/julian-golang-training-beginner/internal/postgres"
 	paymentcode "github.com/julianjca/julian-golang-training-beginner/paymentcodes"
@@ -22,10 +24,11 @@ const (
 var (
 	paymentCodeRepository *postgres.PaymentCodeRepository
 	paymentCodeService    *paymentcode.PaymentCodeService
-	rootCmd = &cobra.Command{
+	rootCmd               = &cobra.Command{
 		Use:   "app",
 		Short: "Application",
 	}
+	expirePaymentCodesJob jobs.ExpirePaymentCodesJob
 )
 
 func init() {
@@ -51,6 +54,8 @@ func initApp() {
 	}
 
 	fmt.Println("Successfully connected!")
+
+	expirePaymentCodesJob = jobs.ExpirePaymentCodesJob{PaymentCodesService: paymentCodeService}
 }
 
 // Execute will call the root command execute
