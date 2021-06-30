@@ -25,6 +25,7 @@ func expireVirtualAccounts(
 	fmt.Print("running cron")
 	// Manually run the Expire CRON job every 5s since the lowest granularity is minute in a CRON expression for k8s
 	for i := 1; i < 12; i++ {
+
 		err := expirePaymentCodesJob.Work()
 		if err != nil {
 			log.Fatal(err)
