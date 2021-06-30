@@ -25,6 +25,7 @@ require (
 	github.com/openzipkin/zipkin-go v0.1.1 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.3 // indirect
+	github.com/spf13/viper v1.8.1 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	gopkg.in/urfave/cli.v1 v1.20.0 // indirect
