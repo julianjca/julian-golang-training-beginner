@@ -2,6 +2,7 @@ package paymentcodes
 
 import (
 	"fmt"
+	"time"
 
 	golangtraining "github.com/julianjca/julian-golang-training-beginner"
 )
@@ -30,7 +31,9 @@ func NewService(
 }
 
 func (s PaymentCodeService) Create(p *golangtraining.PaymentCode) error {
-	// _, err := s.starwarsClient.GetCharacters()
+	now := time.Now().UTC()
+	p.ExpirationDate = now.AddDate(51, 0, 0)
+
 	_, err := s.repo.Create(p)
 	if err != nil {
 		return err

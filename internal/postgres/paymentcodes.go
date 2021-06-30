@@ -32,7 +32,6 @@ func (t PaymentCodeRepository) Create(p *golangtraining.PaymentCode) (*golangtra
 	p.CreatedAt = now
 	p.UpdatedAt = now
 	p.Status = "ACTIVE"
-	p.ExpirationDate = now.AddDate(51, 0, 0)
 
 	query := sq.
 		Insert("payment_codes").
@@ -69,4 +68,15 @@ func (t PaymentCodeRepository) GetByID(ID string) (golangtraining.PaymentCode, e
 	}
 
 	return res, nil
+}
+
+func (t PaymentCodeRepository) Expire() error {
+	query := `UPDATE payment_codes SET updated_at=$1, status='INACTIVE' WHERE status = 'ACTIVE' AND expiration_date <= $2`
+
+	_, err := t.DB.Exec(query, time.Now().UTC(), time.Now().UTC())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
