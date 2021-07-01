@@ -20,5 +20,16 @@ services:
       - default
     ports:
       - "3000:3000"
+  expire-payment-code-cron:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+    ports:
+      - 9092:9092
+    env_file:
+      - .env
+    command: /app/engine expire-payment-code
 volumes:
   data:
