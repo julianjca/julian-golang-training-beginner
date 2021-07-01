@@ -49,12 +49,12 @@ func TestCreatePaymentCode(t *testing.T) {
 				m.
 					EXPECT().
 					Create(gomock.Any()).
-					Return(nil, errors.New("Unknown Error"))
+					Return(nil, errors.New("unknown error"))
 
 				return m
 			}(),
 
-			expectedReturn: errors.New("Unknown Error"),
+			expectedReturn: errors.New("unknown error"),
 		},
 	}
 
@@ -113,13 +113,13 @@ func TestGetByID(t *testing.T) {
 				m.
 					EXPECT().
 					GetByID(gomock.Any()).
-					Return(golangtraining.PaymentCode{}, errors.New("Unknown Error"))
+					Return(golangtraining.PaymentCode{}, errors.New("unknown error"))
 
 				return m
 			}(),
 
 			expectedReturn: golangtraining.PaymentCode{},
-			expectedError:  errors.New("Unknown Error"),
+			expectedError:  errors.New("unknown error"),
 		},
 	}
 
@@ -133,6 +133,54 @@ func TestGetByID(t *testing.T) {
 			}
 
 			require.Equal(t, tC.expectedReturn, res)
+		})
+	}
+}
+
+func TestExpire(t *testing.T) {
+	testCases := []struct {
+		desc           string
+		repo           *mocks.MockRepository
+		expectedError  error
+	}{
+		{
+			desc: "expire payment codes - success",
+			repo: func() *mocks.MockRepository {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockRepository(ctrl)
+				m.
+					EXPECT().
+					Expire().
+					Return(nil)
+
+				return m
+			}(),
+			expectedError: nil,
+		},
+		{
+			desc: "expire payment codes - failed",
+			repo: func() *mocks.MockRepository {
+				ctrl := gomock.NewController(t)
+				m := mocks.NewMockRepository(ctrl)
+
+				m.
+					EXPECT().
+					Expire().
+					Return(errors.New("unknown error"))
+
+				return m
+			}(),
+
+			expectedError:  errors.New("unknown error"),
+		},
+	}
+
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			service := paymentcodes.NewService(tC.repo)
+			err := service.Expire()
+
+			require.Equal(t, tC.expectedError, err)
 		})
 	}
 }

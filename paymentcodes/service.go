@@ -2,6 +2,7 @@ package paymentcodes
 
 import (
 	"fmt"
+	"time"
 
 	golangtraining "github.com/julianjca/julian-golang-training-beginner"
 )
@@ -14,6 +15,7 @@ type GetByIDResponse struct {
 type Repository interface {
 	Create(p *golangtraining.PaymentCode) (*golangtraining.PaymentCode, error)
 	GetByID(ID string) (golangtraining.PaymentCode, error)
+	Expire() error
 }
 
 type PaymentCodeService struct {
@@ -30,7 +32,9 @@ func NewService(
 }
 
 func (s PaymentCodeService) Create(p *golangtraining.PaymentCode) error {
-	// _, err := s.starwarsClient.GetCharacters()
+	now := time.Now().UTC()
+	p.ExpirationDate = now.AddDate(51, 0, 0)
+
 	_, err := s.repo.Create(p)
 	if err != nil {
 		return err
@@ -46,4 +50,13 @@ func (s PaymentCodeService) GetByID(ID string) (res golangtraining.PaymentCode, 
 	}
 
 	return
+}
+
+func (s PaymentCodeService) Expire() error {
+	err := s.repo.Expire()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/spf13/cobra"
 	"log"
 	"net/http"
 	"time"
@@ -10,7 +11,17 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func Execute() {
+var restCommand = &cobra.Command{
+	Use:   "rest",
+	Short: "Start REST server",
+	Run:   restServer,
+}
+
+func init() {
+	rootCmd.AddCommand(restCommand)
+}
+
+func restServer(cmd *cobra.Command, args []string) {
 	port := ":3000"
 
 	r := httprouter.New()

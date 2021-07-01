@@ -3,6 +3,7 @@ package postgres
 import (
 	"os"
 	"testing"
+	"time"
 
 	golangtraining "github.com/julianjca/julian-golang-training-beginner"
 	"github.com/pkg/errors"
@@ -99,6 +100,49 @@ func (s paymentCodesTestSuite) TestGetPaymentCodeByID() {
 			p, err := repo.Create(tC.body)
 			_, err = repo.GetByID(p.ID)
 			s.Require().Equal(tC.expectedErr, errors.Cause(err))
+		})
+	}
+}
+
+func (s paymentCodesTestSuite) TestExpirePaymentCode() {
+	repo := NewPaymentCodeRepository(s.DBConn)
+	date := time.Date(2018, time.July, 5, 4, 3, 2, 0, time.UTC)
+
+	paymentCode := golangtraining.PaymentCode{
+		ID:             "1a510335-83eb-49f4-a121-9dc2d7a11349",
+		Name:           "Name",
+		Status:         "ACTIVE",
+		PaymentCode:    "payment-code-1",
+		ExpirationDate: date,
+	}
+
+	testCases := []struct {
+		desc        string
+		expectedErr error
+		body        *golangtraining.PaymentCode
+		expectedRes *golangtraining.PaymentCode
+	}{
+		{
+			desc:        "expire-success",
+			expectedErr: nil,
+			body:        &paymentCode,
+			expectedRes: &paymentCode,
+		},
+	}
+
+	for _, tC := range testCases {
+		s.T().Run(tC.desc, func(t *testing.T) {
+			resp, err := repo.Create(tC.body)
+
+			err = repo.Expire()
+
+			res, err := repo.GetByID(resp.ID)
+
+			if err != nil {
+				s.Require().Equal(tC.expectedErr, errors.Cause(err))
+			}
+
+			s.Require().Equal("INACTIVE", res.Status)
 		})
 	}
 }
