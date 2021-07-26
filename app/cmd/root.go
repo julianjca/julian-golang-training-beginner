@@ -3,21 +3,26 @@ package cmd
 import (
 	"database/sql"
 	"fmt"
-	"github.com/julianjca/julian-golang-training-beginner/app/cmd/helpers"
 	"log"
 	"strconv"
+
+	"github.com/julianjca/julian-golang-training-beginner/app/cmd/helpers"
 
 	"github.com/julianjca/julian-golang-training-beginner/internal/jobs"
 	"github.com/spf13/cobra"
 
+	inquiries "github.com/julianjca/julian-golang-training-beginner/inquiries"
 	"github.com/julianjca/julian-golang-training-beginner/internal/postgres"
 	paymentcode "github.com/julianjca/julian-golang-training-beginner/paymentcodes"
+
 	_ "github.com/lib/pq"
 )
 
 var (
 	paymentCodeRepository *postgres.PaymentCodeRepository
 	paymentCodeService    *paymentcode.PaymentCodeService
+	inquiriesRepository   *postgres.InquiriesRepository
+	inquiriesService      *inquiries.InquiryService
 	rootCmd               = &cobra.Command{
 		Use:   "app",
 		Short: "Application",
@@ -40,7 +45,6 @@ func initApp() {
 	password := helpers.MustHaveEnv("POSTGRES_PASSWORD")
 	dbname := helpers.MustHaveEnv("POSTGRES_DB_NAME")
 
-
 	//psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 	//	"password=%s dbname=%s sslmode=disable",
 	//	host, port, user, password, dbname)
@@ -55,6 +59,8 @@ func initApp() {
 	db, err := sql.Open("postgres", psqlInfo)
 	paymentCodeRepository = postgres.NewPaymentCodeRepository(db)
 	paymentCodeService = paymentcode.NewService(paymentCodeRepository)
+	inquiriesRepository = postgres.NewInquiriesRepository(db)
+	inquiriesService = inquiries.NewService(inquiriesRepository)
 
 	if err != nil {
 		panic(err)

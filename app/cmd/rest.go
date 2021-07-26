@@ -1,10 +1,11 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/spf13/cobra"
 
 	rest "github.com/julianjca/julian-golang-training-beginner/internal/rest"
 	"github.com/julianjca/julian-golang-training-beginner/internal/starwars"
@@ -31,6 +32,8 @@ func restServer(cmd *cobra.Command, args []string) {
 	starwarsClient := starwars.NewStarWarsClient(httpClient, "https://swapi.dev/api/people")
 
 	rest.InitPaymentCodeRESTHandler(r, paymentCodeService, starwarsClient)
+
+	rest.InitInquiryRESTHandler(r, inquiriesService)
 
 	log.Println("listen on", port)
 	log.Fatal(http.ListenAndServe(port, r))
