@@ -9,7 +9,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-//go:generate mockgen -destination=mocks/mock_inquiries_service.go -package=mocks . Service
+//go:generate mockgen -destination=mocks/mock_inquiries_service.go -package=mocks . InquiryService
 type InquiryService interface {
 	Create(p *golangtraining.Inquiry) (*golangtraining.Inquiry, error)
 }

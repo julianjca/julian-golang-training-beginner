@@ -60,7 +60,7 @@ func initApp() {
 	paymentCodeRepository = postgres.NewPaymentCodeRepository(db)
 	paymentCodeService = paymentcode.NewService(paymentCodeRepository)
 	inquiriesRepository = postgres.NewInquiriesRepository(db)
-	inquiriesService = inquiries.NewService(inquiriesRepository)
+	inquiriesService = inquiries.NewService(inquiriesRepository, *paymentCodeService)
 
 	if err != nil {
 		panic(err)
