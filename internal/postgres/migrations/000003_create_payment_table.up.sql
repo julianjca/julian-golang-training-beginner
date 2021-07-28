@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS payments(
    payment_code TEXT,
    transaction_id TEXT,
    name TEXT,
-   amount TEXT,
+   amount INTEGER,
    created_at timestamptz,
    updated_at timestamptz
 );

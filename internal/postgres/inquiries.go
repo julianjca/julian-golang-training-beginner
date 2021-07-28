@@ -47,3 +47,24 @@ func (t InquiriesRepository) Create(p *golangtraining.Inquiry) (*golangtraining.
 
 	return p, nil
 }
+
+func (t InquiriesRepository) GetByPaymentCode(p string) (golangtraining.Inquiry, error) {
+	var res golangtraining.Inquiry
+	var err error
+
+	query := sq.
+		Select("*").
+		Where(sq.Eq{"payment_code": p}).
+		From("inquiries").
+		PlaceholderFormat(sq.Dollar)
+
+	err = query.RunWith(t.DB).QueryRow().Scan(
+		&res.ID, &res.PaymentCode, &res.TransactionId, &res.CreatedAt, &res.UpdatedAt,
+	)
+
+	if err != nil {
+		return res, errors.New("not found")
+	}
+
+	return res, nil
+}

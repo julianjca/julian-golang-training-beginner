@@ -35,6 +35,8 @@ func restServer(cmd *cobra.Command, args []string) {
 
 	rest.InitInquiryRESTHandler(r, inquiriesService)
 
+	rest.InitPaymentRESTHandler(r, paymentsService)
+
 	log.Println("listen on", port)
 	log.Fatal(http.ListenAndServe(port, r))
 }

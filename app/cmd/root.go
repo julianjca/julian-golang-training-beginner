@@ -11,18 +11,21 @@ import (
 	"github.com/julianjca/julian-golang-training-beginner/internal/jobs"
 	"github.com/spf13/cobra"
 
-	inquiries "github.com/julianjca/julian-golang-training-beginner/inquiries"
+	"github.com/julianjca/julian-golang-training-beginner/inquiries"
 	"github.com/julianjca/julian-golang-training-beginner/internal/postgres"
-	paymentcode "github.com/julianjca/julian-golang-training-beginner/paymentcodes"
+	"github.com/julianjca/julian-golang-training-beginner/paymentcodes"
+	"github.com/julianjca/julian-golang-training-beginner/payments"
 
 	_ "github.com/lib/pq"
 )
 
 var (
 	paymentCodeRepository *postgres.PaymentCodeRepository
-	paymentCodeService    *paymentcode.PaymentCodeService
+	paymentCodeService    *paymentcodes.PaymentCodeService
 	inquiriesRepository   *postgres.InquiriesRepository
 	inquiriesService      *inquiries.InquiryService
+	paymentsService    	  *payments.PaymentService
+	paymentsRepository    *postgres.PaymentsRepository
 	rootCmd               = &cobra.Command{
 		Use:   "app",
 		Short: "Application",
@@ -45,9 +48,6 @@ func initApp() {
 	password := helpers.MustHaveEnv("POSTGRES_PASSWORD")
 	dbname := helpers.MustHaveEnv("POSTGRES_DB_NAME")
 
-	//psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-	//	"password=%s dbname=%s sslmode=disable",
-	//	host, port, user, password, dbname)
 	psqlInfo := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
 		user,
 		password,
@@ -57,11 +57,6 @@ func initApp() {
 	)
 
 	db, err := sql.Open("postgres", psqlInfo)
-	paymentCodeRepository = postgres.NewPaymentCodeRepository(db)
-	paymentCodeService = paymentcode.NewService(paymentCodeRepository)
-	inquiriesRepository = postgres.NewInquiriesRepository(db)
-	inquiriesService = inquiries.NewService(inquiriesRepository, *paymentCodeService)
-
 	if err != nil {
 		panic(err)
 	}
@@ -70,6 +65,13 @@ func initApp() {
 	if err != nil {
 		panic(err)
 	}
+
+	paymentCodeRepository = postgres.NewPaymentCodeRepository(db)
+	paymentCodeService = paymentcodes.NewService(paymentCodeRepository)
+	inquiriesRepository = postgres.NewInquiriesRepository(db)
+	inquiriesService = inquiries.NewService(inquiriesRepository, *paymentCodeService)
+	paymentsRepository = postgres.NewPaymentsRepository(db)
+	paymentsService = payments.NewService(paymentsRepository, *inquiriesService)
 
 	fmt.Println("Successfully connected!")
 
