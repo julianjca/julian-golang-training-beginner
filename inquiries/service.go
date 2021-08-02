@@ -2,7 +2,6 @@ package inquiries
 
 import (
 	golangtraining "github.com/julianjca/julian-golang-training-beginner"
-	"github.com/julianjca/julian-golang-training-beginner/paymentcodes"
 )
 
 //go:generate mockgen -destination=mocks/mock_inquiries_repo.go -package=mocks . Repository
@@ -11,15 +10,20 @@ type Repository interface {
 	GetByPaymentCode(p string) (golangtraining.Inquiry, error)
 }
 
+//go:generate mockgen -destination=mocks/mock_payment_code_service.go -package=mocks . PaymentCodeService
+type PaymentCodeService interface {
+	GetByPaymentCode(paymentCode string) (res golangtraining.PaymentCode, err error)
+}
+
 type InquiryService struct {
 	repo               Repository
-	paymentCodeService paymentcodes.PaymentCodeService
+	paymentCodeService PaymentCodeService
 }
 
 // NewService will initialize the implementations of VA Settings service
 func NewService(
 	repo Repository,
-	paymentCodeService paymentcodes.PaymentCodeService,
+	paymentCodeService PaymentCodeService,
 ) *InquiryService {
 	return &InquiryService{
 		repo:               repo,
