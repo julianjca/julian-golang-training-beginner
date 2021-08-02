@@ -48,3 +48,18 @@ func (mr *MockRepositoryMockRecorder) Create(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockRepository)(nil).Create), arg0)
 }
+
+// GetByPaymentCode mocks base method.
+func (m *MockRepository) GetByPaymentCode(arg0 string) (golangtraining.Inquiry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByPaymentCode", arg0)
+	ret0, _ := ret[0].(golangtraining.Inquiry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByPaymentCode indicates an expected call of GetByPaymentCode.
+func (mr *MockRepositoryMockRecorder) GetByPaymentCode(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPaymentCode", reflect.TypeOf((*MockRepository)(nil).GetByPaymentCode), arg0)
+}

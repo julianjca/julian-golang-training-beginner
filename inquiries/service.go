@@ -5,7 +5,7 @@ import (
 	"github.com/julianjca/julian-golang-training-beginner/paymentcodes"
 )
 
-//go:generate mockgen -destination=mocks/mock_paymentcodes_repo.go -package=mocks . Repository
+//go:generate mockgen -destination=mocks/mock_inquiries_repo.go -package=mocks . Repository
 type Repository interface {
 	Create(p *golangtraining.Inquiry) (*golangtraining.Inquiry, error)
 	GetByPaymentCode(p string) (golangtraining.Inquiry, error)
