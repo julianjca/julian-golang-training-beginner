@@ -7,6 +7,7 @@ require (
 	git.apache.org/thrift.git v0.0.0-20180807212849-6e67faa92827 // indirect
 	github.com/0xAX/notificator v0.0.0-20191016112426-3962a5ea8da1 // indirect
 	github.com/Masterminds/squirrel v1.5.0 // indirect
+	github.com/aws/aws-sdk-go v1.40.14 // indirect
 	github.com/codegangsta/envy v0.0.0-20141216192214-4b78388c8ce4 // indirect
 	github.com/cznic/ql v1.2.0 // indirect
 	github.com/go-ini/ini v1.38.2 // indirect

@@ -6,6 +6,10 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/julianjca/julian-golang-training-beginner/internal/sqs"
+
 	"github.com/julianjca/julian-golang-training-beginner/app/cmd/helpers"
 
 	"github.com/julianjca/julian-golang-training-beginner/internal/jobs"
@@ -24,7 +28,7 @@ var (
 	paymentCodeService    *paymentcodes.PaymentCodeService
 	inquiriesRepository   *postgres.InquiriesRepository
 	inquiriesService      *inquiries.InquiryService
-	paymentsService    	  *payments.PaymentService
+	paymentsService       *payments.PaymentService
 	paymentsRepository    *postgres.PaymentsRepository
 	rootCmd               = &cobra.Command{
 		Use:   "app",
@@ -66,12 +70,14 @@ func initApp() {
 		panic(err)
 	}
 
+	sqsPublisher := initSQSPublisher()
+
 	paymentCodeRepository = postgres.NewPaymentCodeRepository(db)
 	paymentCodeService = paymentcodes.NewService(paymentCodeRepository)
 	inquiriesRepository = postgres.NewInquiriesRepository(db)
 	inquiriesService = inquiries.NewService(inquiriesRepository, *paymentCodeService)
 	paymentsRepository = postgres.NewPaymentsRepository(db)
-	paymentsService = payments.NewService(paymentsRepository, *inquiriesService)
+	paymentsService = payments.NewService(paymentsRepository, *inquiriesService, sqsPublisher)
 
 	fmt.Println("Successfully connected!")
 
@@ -83,4 +89,25 @@ func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func initSQSPublisher() *sqs.Publisher {
+	region := helpers.MustHaveEnv("SQS_AWS_REGION")
+	endpoint := helpers.MustHaveEnv("SQS_ENDPOINT")
+
+	s, err := session.NewSession(&aws.Config{
+		Region:   &region,
+		Endpoint: &endpoint,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	q := helpers.MustHaveEnv("SQS_QUEUE_NAME")
+	p, err := sqs.NewPublisher(s, q)
+	if err != nil {
+		panic(err)
+	}
+
+	return p
 }
