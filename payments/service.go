@@ -1,6 +1,8 @@
 package payments
 
 import (
+	"fmt"
+
 	golangtraining "github.com/julianjca/julian-golang-training-beginner"
 	"github.com/julianjca/julian-golang-training-beginner/inquiries"
 )
@@ -45,5 +47,10 @@ func (i PaymentService) Create(p *golangtraining.Payment) (*golangtraining.Payme
 	if err != nil {
 		return nil, err
 	}
+	err = i.publisher.Publish(p)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	return res, nil
 }

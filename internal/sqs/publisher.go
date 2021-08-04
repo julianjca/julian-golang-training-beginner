@@ -2,6 +2,9 @@ package sqs
 
 import (
 	"encoding/json"
+	"fmt"
+
+	"github.com/julianjca/julian-golang-training-beginner/app/cmd/helpers"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -9,23 +12,26 @@ import (
 )
 
 type Publisher struct {
-	QueueUrl *string
 	SQS      *sqs.SQS
+	QueueUrl *string
 }
 
-func NewPublisher(s *session.Session, queue string) (*Publisher, error) {
-	var p Publisher
-	sq := sqs.New(s)
-
-	res, err := sq.GetQueueUrl(&sqs.GetQueueUrlInput{
-		QueueName: &queue,
-	})
-	if err != nil {
-		return &p, err
+func NewPublisher(region, endpoint string) (*Publisher, error) {
+	cfg := aws.Config{
+		Region: aws.String(region),
+	}
+	// if endpoint is not empty, we will use localstack
+	if endpoint != "" {
+		cfg.Endpoint = aws.String(endpoint)
 	}
 
-	p.SQS = sq
-	p.QueueUrl = res.QueueUrl
+	sess := session.Must(session.NewSession(&cfg))
+	var p Publisher
+	sqsClient := sqs.New(sess)
+
+	p.SQS = sqsClient
+	queueUrl := helpers.MustHaveEnv("SQS_QUEUE_URL")
+	p.QueueUrl = &queueUrl
 
 	return &p, nil
 }
@@ -33,10 +39,12 @@ func NewPublisher(s *session.Session, queue string) (*Publisher, error) {
 func (p Publisher) Publish(msg interface{}) error {
 	messageBody, _ := json.Marshal(msg)
 
-	_, err := p.SQS.SendMessage(&sqs.SendMessageInput{
+	res, err := p.SQS.SendMessage(&sqs.SendMessageInput{
 		MessageBody: aws.String(string(messageBody)),
 		QueueUrl:    p.QueueUrl,
 	})
+
+	fmt.Println(res)
 
 	return err
 }

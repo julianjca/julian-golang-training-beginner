@@ -6,8 +6,8 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/aws/endpoints"
+
 	"github.com/julianjca/julian-golang-training-beginner/internal/sqs"
 
 	"github.com/julianjca/julian-golang-training-beginner/app/cmd/helpers"
@@ -70,7 +70,7 @@ func initApp() {
 		panic(err)
 	}
 
-	sqsPublisher := initSQSPublisher()
+	sqsPublisher, _ := sqs.NewPublisher(endpoints.UsEast1RegionID, helpers.MustHaveEnv("SQS_ENDPOINT"))
 
 	paymentCodeRepository = postgres.NewPaymentCodeRepository(db)
 	paymentCodeService = paymentcodes.NewService(paymentCodeRepository)
@@ -89,25 +89,4 @@ func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func initSQSPublisher() *sqs.Publisher {
-	region := helpers.MustHaveEnv("SQS_AWS_REGION")
-	endpoint := helpers.MustHaveEnv("SQS_ENDPOINT")
-
-	s, err := session.NewSession(&aws.Config{
-		Region:   &region,
-		Endpoint: &endpoint,
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	q := helpers.MustHaveEnv("SQS_QUEUE_NAME")
-	p, err := sqs.NewPublisher(s, q)
-	if err != nil {
-		panic(err)
-	}
-
-	return p
 }
